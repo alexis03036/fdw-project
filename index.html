@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Registrazione</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+    .container { max-width: 400px; margin: 50px auto; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); border-radius: 8px; }
+    h2 { text-align: center; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; }
+    .form-group input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    .form-group button { width: 100%; padding: 10px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .form-group button:hover { background-color: #0056b3; }
+    .form-switch { text-align: center; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Registrati o Accedi</h2>
+    <form id="authForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required />
+      </div>
+      <div class="form-group">
+        <button type="submit" id="submitBtn">Registrati</button>
+      </div>
+      <div class="form-switch">
+        <p><a href="#" id="toggleForm">Hai già un account? Accedi</a></p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const authForm = document.getElementById('authForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const toggleForm = document.getElementById('toggleForm');
+    let isLogin = false;
+
+    toggleForm.addEventListener('click', (e) => {
+      e.preventDefault();
+      isLogin = !isLogin;
+      toggleForm.innerText = isLogin ? 'Non hai un account? Registrati' : 'Hai già un account? Accedi';
+      submitBtn.innerText = isLogin ? 'Accedi' : 'Registrati';
+    });
+
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const endpoint = isLogin ? '/api/login' : '/api/register';
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        alert('Operazione riuscita');
+      } else {
+        alert('Errore: ' + data.message);
+      }
+    });
+  </script>
+</body>
+</html>
