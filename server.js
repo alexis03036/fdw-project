@@ -4,7 +4,6 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth");
 const corsiRoutes = require("./routes/corsi");
-const lezioniRoutes = require("./routes/lezioni");
 const authMiddleware = require("./middlewares/auth");
 require("dotenv").config();
 
@@ -36,16 +35,7 @@ mongoose
 // Rotte
 app.use("/api/auth", authRoutes);
 app.use("/api/corsi", authMiddleware, corsiRoutes);
-app.use("/api/lezioni", authMiddleware, lezioniRoutes);
 
-// Rotte per le altre 8 pagine
-app.get("/CourseLesson", (req, res) => res.send("CourseLesson"));
-app.get("/Homepage", (req, res) => res.send("Homepage"));
-app.get("/Homepaged", (req, res) => res.send("Homepaged"));
-app.get("/Homepages", (req, res) => res.send("Homepages"));
-app.get("/Login", (req, res) => res.send("Login"));
-app.get("/Signup", (req, res) => res.send("Signup"));
-app.get("/StudentLesson", (req, res) => res.send("StudentLesson"));
 
 // Avvio del server
 const PORT = process.env.PORT || 5000;

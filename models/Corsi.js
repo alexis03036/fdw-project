@@ -1,27 +1,18 @@
 const mongoose = require('mongoose');
 
-// Definiamo lo schema del corso
+// Schema della lezione (subdocumento)
+const lezioneSchema = new mongoose.Schema({
+  titolo: { type: String,  },
+  video: { type: String, }
+});
+
+// Schema del corso
 const corsoSchema = new mongoose.Schema({
-  titolo: {
-    type: String,
-    required: true
-  },
-  descrizione: {
-    type: String,
-    required: true
-  },
-  dataInizio: {
-    type: Date,
-    required: true
-  },
-  dataFine: {
-    type: Date
-  },
-  docente: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  }
+  titolo: { type: String },
+  descrizione: { type: String  },
+  img: { type: String },
+  docente: { type: mongoose.Schema.Types.ObjectId, ref: "User"},
+  lezioni: [lezioneSchema] // array di subdocumenti
 });
 
 // Creiamo il modello
