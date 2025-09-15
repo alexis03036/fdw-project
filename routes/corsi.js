@@ -6,14 +6,15 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 router.post("/a", async (req, res) => {
-  const { titolo, descrizione, img, docente } = req.body; 
+  const { titolo, descrizione, img, docente } = req.body;
+  console.log("Dati ricevuti per nuovo corso:", req.body); // Debug: verifica i dati ricevuti
   try {
     const nuovoCorso = new Corso({
       titolo,
       descrizione,
       img,
-      docente, 
-      lezioni: []
+      docente,
+      lezioni: [],
     });
     await nuovoCorso.save();
     res.status(201).json(nuovoCorso);

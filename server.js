@@ -36,7 +36,6 @@ mongoose
 app.use("/api/auth", authRoutes);
 app.use("/api/corsi", authMiddleware, corsiRoutes);
 
-
 // Avvio del server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

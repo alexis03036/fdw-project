@@ -13,10 +13,12 @@ function verifyToken(req, res, next) {
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    if (verified._id) next();
+    console.log("Token verified:", verified); // Debug: verifica il token
+    if (verified.userId) next();
   } catch (err) {
     console.error("Token verification failed:", err); // Debug: errore di verifica
     res.status(401).json({ message: "Token non valido." });
+    return;
   }
 }
 
