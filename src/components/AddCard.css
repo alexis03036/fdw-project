@@ -1,0 +1,33 @@
+.inline-form {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.inline-form form {
+  background: #ffffff;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.inline-form input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.inline-form input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+
+

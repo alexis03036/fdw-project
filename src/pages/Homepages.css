@@ -1,0 +1,14 @@
+.homepages{
+  background-image:url("../assets/background.jpg")  
+}
+.container-student{
+    padding:20px
+}
+.h1-student{
+   text-align: center;
+}
+.container-card-student{
+  display: flex;      
+  flex-wrap: wrap;      
+  gap: 16px;            
+}

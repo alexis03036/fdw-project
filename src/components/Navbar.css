@@ -1,0 +1,28 @@
+.active {
+  background-color: blue;
+}
+.navbar-mia {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background-color: #0f172a;
+}
+
+.navbar-mia .logo {
+  height: 2rem;
+}
+
+.navbar-mia a {
+  display: flex;
+  width: fit-content;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+.navbar-mia a:hover {
+  background-color: #172554;
+}
