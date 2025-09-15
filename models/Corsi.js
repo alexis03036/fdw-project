@@ -17,5 +17,4 @@ const corsoSchema = new mongoose.Schema({
 
 // Creiamo il modello
 const Corso = mongoose.model('Corso', corsoSchema);
-
 module.exports = Corso;

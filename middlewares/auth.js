@@ -10,10 +10,9 @@ function verifyToken(req, res, next) {
       .status(401)
       .json({ message: "Accesso negato. Token non fornito." });
   }
-
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Token verified:", verified); // Debug: verifica il token
+    req.user = verified;
     if (verified.userId) next();
   } catch (err) {
     console.error("Token verification failed:", err); // Debug: errore di verifica

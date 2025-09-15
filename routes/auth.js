@@ -35,9 +35,6 @@ router.post("/login", async (req, res) => {
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword)
       return res.status(401).json({ message: "Password errata" });
-
-    console.log("JWT secret:", process.env.JWT_SECRET); // Debug: verifica l'utente autenticato
-
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
