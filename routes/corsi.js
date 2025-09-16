@@ -4,8 +4,93 @@ const Corso = require("../models/Corsi");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
+const mongoose = require("mongoose"); 
 
-//serve per stampare a schermo tutti i corsi di quel docente
+//------------------------------------STUDENTE-----------------------------------------
+//GET->che mi permette di avere tutti i corsi per mostrarli a schermo
+router.get("/allcorsi",async (req,res)=>{
+  try{
+    const corso = await Corso.find().populate("docente","nome cognome");
+    res.json(corso);
+  }catch(err)
+  {console.log(err)}
+})
+//GET->che mi permette di avere il corso dello studente iscritto
+router.get("/allcorsi/:idStudente",async(req,res)=>{
+  try {
+      const { idStudente } = req.params;
+    const studente = await User.findById(idStudente).populate({
+      path: "corsiIscritti",
+      populate: { path: "docente", select: "nome cognome" }
+    });
+
+    if (!studente) {
+      return res.status(404).json({ message: "Studente non trovato" });
+    }
+
+    res.json(studente.corsiIscritti); // array di corsi
+  } catch (err) {
+    console.error("Errore corsi iscritti:", err);
+    res.status(500).json({ message: "Errore del server" });
+  }
+})
+//POST->permette di aggiornare il database quando lo studente si iscrive al corso
+router.post("/addcorsi/:idStudente",async(req,res)=>{
+  try
+  {
+    const studenteId = req.params.idStudente;
+    const { corsoId } = req.body; 
+    const studente = await User.findById(studenteId);
+    const corso = await Corso.findById(corsoId);
+    if (!studente.corsiIscritti.includes(corsoId)) {
+      studente.corsiIscritti.push(corsoId);
+      await studente.save();
+    }
+
+    // Aggiorno il corso se lo studente non è già dentro
+    if (!corso.studentiIscritti.includes(studenteId)) {
+      corso.studentiIscritti.push(studenteId);
+      await corso.save();
+    }
+    const corsoAggiornato = await Corso.findById(corsoId).populate("docente", "nome cognome");
+    res.status(200).json(corsoAggiornato);
+  }catch(err)
+  {
+    console.log(err);
+  }
+
+})
+
+// DELETE /corsi/deletecourse/:studenteId/:corsoId
+router.delete("/deletecourse/:studenteId/:corsoId", async (req, res) => {
+  const { studenteId, corsoId } = req.params;
+
+  try {
+    const corsoAggiornato = await Corso.findByIdAndUpdate(
+      corsoId,
+      { $pull: { studentiIscritti: new mongoose.Types.ObjectId(studenteId) } }, // 👈 conversione
+      { new: true }
+    );
+
+    if (!corsoAggiornato) {
+      return res.status(404).json({ error: "Corso non trovato" });
+    }
+
+    res.json({
+      message: "Studente rimosso dal corso",
+      corso: corsoAggiornato,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Errore nella disiscrizione" });
+  }
+});
+
+
+
+
+
+//----------------------------------DOCENTE----------------------------------------------
 // GET->SERVE PER MOSTRARE TUTTI I CORSI DEL DOCENTE
 router.get("/", async (req, res) => {
   try {
@@ -18,10 +103,20 @@ router.get("/", async (req, res) => {
   }
 });
 
+//GET->PER OTTENERE I DETTAGLI DI UN SINGOLO CORSO DEL DOCENTE
+router.get("/:id",async(req,res)=>{
+  try{
+    const corso = await Corso.findById(req.params.id);
+    res.json(corso);
+  }catch(err)
+   {
+  }
+})
+
 //POST->PERMETTE DI AGGIUNGERE UN CORSO
 router.post("/add", async (req, res) => {
   try {
-    const { titolo, descrizione, img,docente } = req.body;
+    const { titolo, descrizione, img, docente } = req.body;
 
     const nuovoCorso = new Corso({
       titolo,
@@ -38,27 +133,35 @@ router.post("/add", async (req, res) => {
     res.status(500).json({ message: "Errore nella creazione corso" });
   }
 });
+
 // PUT -> AGGIORNA CORSO ESISTENTE
 router.put("/:id", async (req, res) => {
   try {
     const { titolo, descrizione, img } = req.body;
-
     const corsoAggiornato = await Corso.findByIdAndUpdate(
-      req.params.id,               // 👈 prende l'id dall'URL
+      req.params.id,             
       { titolo, descrizione, img },
-      { new: true }                // ritorna il documento aggiornato
+      { new: true }               
     );
-
-    if (!corsoAggiornato) {
-      return res.status(404).json({ message: "Corso non trovato" });
-    }
-
     res.json(corsoAggiornato);
   } catch (err) {
     console.error("Errore nell'aggiornamento corso:", err);
     res.status(500).json({ message: "Errore nell'aggiornamento corso" });
   }
 });
+//DELETE -> per eliminare corso
+router.delete("/:id",async(req,res)=>{
+  try{
+    const corsoAggiornato = await Corso.findByIdAndDelete(req.params.id);
+    res.json(corsoAggiornato);
+  }catch(err)
+  {
+    res.status(404).json({message:"Corso non trovato"});
+  }
+})
+
+
+
 
 
 

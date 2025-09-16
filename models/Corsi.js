@@ -12,6 +12,7 @@ const corsoSchema = new mongoose.Schema({
   descrizione: { type: String  },
   img: { type: String },
   docente: { type: mongoose.Schema.Types.ObjectId, ref: "User"},
+  studentiIscritti: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   lezioni: [lezioneSchema] // array di subdocumenti
 });
 

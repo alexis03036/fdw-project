@@ -24,6 +24,9 @@ const userSchema = new mongoose.Schema({
     enum: ["studente", "docente"],
     required: true,
   },
+  corsiIscritti: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "Corso" }
+  ],
 });
 
 // Creiamo il modello

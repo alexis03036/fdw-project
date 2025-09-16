@@ -4,6 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth");
 const corsiRoutes = require("./routes/corsi");
+const lezioniRoutes = require("./routes/lezioni");
 const authMiddleware = require("./middlewares/auth");
 require("dotenv").config();
 
@@ -35,6 +36,7 @@ mongoose
 // Rotte
 app.use("/api/auth", authRoutes);
 app.use("/api/corsi", authMiddleware, corsiRoutes);
+app.use("/api/lezioni", authMiddleware, lezioniRoutes);
 
 // Avvio del server
 const PORT = process.env.PORT || 5000;
