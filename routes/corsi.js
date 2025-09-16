@@ -19,7 +19,7 @@ router.get("/allcorsi",async (req,res)=>{
 router.get("/allcorsi/:idStudente",async(req,res)=>{
   try {
       const { idStudente } = req.params;
-    const studente = await User.findById(idStudente).populate({
+      const studente = await User.findById(idStudente).populate({
       path: "corsiIscritti",
       populate: { path: "docente", select: "nome cognome" }
     });
@@ -42,15 +42,10 @@ router.post("/addcorsi/:idStudente",async(req,res)=>{
     const { corsoId } = req.body; 
     const studente = await User.findById(studenteId);
     const corso = await Corso.findById(corsoId);
+    
     if (!studente.corsiIscritti.includes(corsoId)) {
       studente.corsiIscritti.push(corsoId);
       await studente.save();
-    }
-
-    // Aggiorno il corso se lo studente non è già dentro
-    if (!corso.studentiIscritti.includes(studenteId)) {
-      corso.studentiIscritti.push(studenteId);
-      await corso.save();
     }
     const corsoAggiornato = await Corso.findById(corsoId).populate("docente", "nome cognome");
     res.status(200).json(corsoAggiornato);
@@ -66,25 +61,26 @@ router.delete("/deletecourse/:studenteId/:corsoId", async (req, res) => {
   const { studenteId, corsoId } = req.params;
 
   try {
-    const corsoAggiornato = await Corso.findByIdAndUpdate(
-      corsoId,
-      { $pull: { studentiIscritti: new mongoose.Types.ObjectId(studenteId) } }, // 👈 conversione
+    const studenteAggiornato = await User.findByIdAndUpdate(
+      studenteId,
+      { $pull: { corsiIscritti: new mongoose.Types.ObjectId(corsoId) } },
       { new: true }
     );
 
-    if (!corsoAggiornato) {
-      return res.status(404).json({ error: "Corso non trovato" });
+    if (!studenteAggiornato) {
+      return res.status(404).json({ error: "Studente non trovato" });
     }
 
     res.json({
-      message: "Studente rimosso dal corso",
-      corso: corsoAggiornato,
+      message: "Studente disiscritto dal corso",
+      studente: studenteAggiornato,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Errore nella disiscrizione" });
   }
 });
+
 
 
 

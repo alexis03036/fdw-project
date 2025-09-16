@@ -1,34 +1,42 @@
 const express = require('express');
 const Corso = require('../models/Corsi');
 const router = express.Router();
-
+const User = require('../models/User');
 
 //------LATO STUDENTE---------//
 //GET->mi serve per mostrare le lezioni al corso dove lo studente è iscritto
-router.get("/:corsoId/:studenteId",async(req,res)=>{
-  try{
-    const corsoid = req.params.corsoId;
-    const studenteid = req.params.studenteId;
-    const corso = await Corso.findById(corsoid);
-    const studentiIscritti = corso.studentiIscritti;
-    const iscritto = studentiIscritti
-  .map(id => id.toString())
-  .includes(studenteid);
+router.get("/:corsoId/:studenteId", async (req, res) => {
+  try {
+    const { corsoId, studenteId } = req.params;
+
+    // recupero lo studente
+    const studente = await User.findById(studenteId);
+
+    if (!studente) {
+      return res.status(404).json({ message: "Studente non trovato" });
+    }
+
+    // controllo se lo studente è iscritto a quel corso
+    const iscritto = studente.corsiIscritti
+      .map((id) => id.toString())
+      .includes(corsoId);
+
     if (!iscritto) {
       return res.status(403).json({ message: "Non sei iscritto a questo corso" });
     }
-    // ritorna solo le lezioni
+
+    // recupero il corso e ritorno le lezioni
+    const corso = await Corso.findById(corsoId);
+    if (!corso) {
+      return res.status(404).json({ message: "Corso non trovato" });
+    }
+
     res.json(corso.lezioni);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Errore del server" });
   }
-  catch(err)
-  {
-    console.log(err);
-  }
-})
-
-
-
-
+});
 
 //------LATO DOCENTE ----------//
 //GET->mostrare tutti le lezioni del docente
