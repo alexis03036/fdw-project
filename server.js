@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth");
 const corsiRoutes = require("./routes/corsi");
 const lezioniRoutes = require("./routes/lezioni");
@@ -20,10 +19,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"], // se usi Authorization
   })
 );
-app.use(cookieParser());
-
-console.log("MONGO_URI:", process.env.MONGO_URI); // Debug: verifica se la variabile è definita
-
 // Connessione al database
 mongoose
   .connect(process.env.MONGO_URI, {

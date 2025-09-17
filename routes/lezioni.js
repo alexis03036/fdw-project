@@ -12,17 +12,9 @@ router.get("/:corsoId/:studenteId", async (req, res) => {
     // recupero lo studente
     const studente = await User.findById(studenteId);
 
-    if (!studente) {
+    if (!studente) 
+    {
       return res.status(404).json({ message: "Studente non trovato" });
-    }
-
-    // controllo se lo studente è iscritto a quel corso
-    const iscritto = studente.corsiIscritti
-      .map((id) => id.toString())
-      .includes(corsoId);
-
-    if (!iscritto) {
-      return res.status(403).json({ message: "Non sei iscritto a questo corso" });
     }
 
     // recupero il corso e ritorno le lezioni
@@ -30,7 +22,6 @@ router.get("/:corsoId/:studenteId", async (req, res) => {
     if (!corso) {
       return res.status(404).json({ message: "Corso non trovato" });
     }
-
     res.json(corso.lezioni);
   } catch (err) {
     console.error(err);

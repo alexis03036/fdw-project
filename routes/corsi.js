@@ -72,8 +72,7 @@ router.delete("/deletecourse/:studenteId/:corsoId", async (req, res) => {
     }
 
     res.json({
-      message: "Studente disiscritto dal corso",
-      studente: studenteAggiornato,
+      message: "Studente disiscritto dal corso"
     });
   } catch (err) {
     console.error(err);
@@ -106,6 +105,7 @@ router.get("/:id",async(req,res)=>{
     res.json(corso);
   }catch(err)
    {
+     res.status(500).json({ message: "Errore nel recupero corsi" });
   }
 })
 
